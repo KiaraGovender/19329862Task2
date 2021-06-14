@@ -1,0 +1,141 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@using ACMEINC_19329862.Models;
+@using Microsoft.AspNetCore.Http;
+
+// CODE ATTRIBUTION
+// ASP.NET C# MVC Shopping Cart with DB, by MrIndia
+// YouTube Link: https://www.youtube.com/watch?v=OSJyta5dKsg
+// GitHub Link: https://github.com/MrIndra/ASP.NET_MVC5-ShoppingCart
+
+<style>
+
+    .row.display-flex {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+        .row.display-flex > [class*='col-'] {
+            display: flex;
+            flex-direction: column;
+        }
+</style>
+
+<div style="z-index:100;width:100%;background-color:white;">
+    <div class="container-fluid">
+        <div class="row" style="padding:10px;">
+            <form action="/Search/Partial" name="Form" method="post" onsubmit="return validate()">
+                <div class="col-sm-5" style="text-align:right;">
+                    <div class="row display-flex">
+                        <input type="text" class="form-control" id="search" name="search" placeholder="Search.." style="max-width:100%" />
+                    </div>
+
+                </div>
+                <div class="col-sm-1">
+                    <span class="input-group-btn">
+                        <button class="btn btn-search" type="submit" style="border-radius"><i class="glyphicon glyphicon-search"></i>&nbsp;&nbsp; Search</button>
+                    </span>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@{
+
+    if (ViewBag.a == 1)
+
+    {
+
+        <div class="container-fluid" style="margin-top:10px">
+            <div class="row display-flex">
+                @foreach (var product in (List<Product>)ViewData["pro"])
+                {
+                    <div class="col-sm-4">
+                        <table class="table table-bordered" style="border-color:transparent; box-shadow: 0 1px 9px 0 rgba(0, 0, 0, 0.1), 0 1px 10px 0 rgba(0, 0, 0, 0.19);border-top-left-radius:30px;border-top-right-radius:30px;">
+
+                            <tr style="text-align:center">
+                                <td colspan="2" style="border-color:transparent;">
+                                    <img src="~/images/@product.ProductImage" style="width:40%" /><br />
+                                    <span style="color:#337ab7">@product.ProductName</span><br />
+                                    <span style="color:indianred">Description : </span>@product.ProductCategory<br />
+                                </td>
+                            </tr>
+                            <tr style="text-align:center;color:green;">
+                                <td style="border:1px solid white;">
+                                    <button style="background-color:lavender;" class="btn btn-outline-success" onclick="incrementCookie(@product.ProductId)" name="compare"><span style="color:indianred">Price :</span> $@product.ProductPrice&nbsp;&nbsp;&nbsp;<i class="glyphicon glyphicon-shopping-cart"></i></button>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+
+                }
+
+            </div>
+
+        </div>
+    }
+
+    else
+
+    {
+
+        @Html.Partial("ProductGallery")
+
+    }
+
+}
+<script>
+    function increment(aaa) {
+        aaa = aaa + 1;
+        document.getElementById("count").innerHTML = aaa;
+        return aaa;
+    }</script>
+
+<script type="text/javascript">
+    function incrementCookie(pro_id) {
+        var aaa = parseInt(getCookie("Count"));
+        document.cookie = "Count" + "=" + increment(aaa) + "; Path=/";
+
+        if (getCookie(pro_id) == "") {
+            document.cookie = pro_id + "=" + 1 + "; Path=/";
+        }
+        else {
+            var qty = parseInt(getCookie(pro_id));
+            document.cookie = pro_id + "=" + (1 + qty) + "; Path=/";
+
+        }
+    }
+
+    function getCookie(cname) {
+
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+
+    function validate() {
+
+        var a = document.forms["Form"]["search"].value;
+        if (a == null || a == "") {
+            alert("Please enter a search item in the search box..");
+            return false;
+        }
+        return true;
+
+
+    }</script>

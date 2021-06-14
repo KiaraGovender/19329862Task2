@@ -1,0 +1,117 @@
+﻿// Display products
+// CODE ATTRIBUTION
+// ASP.NET C# MVC Shopping Cart with DB, by MrIndia
+// YouTube Link: https://www.youtube.com/watch?v=OSJyta5dKsg
+// GitHub Link: https://github.com/MrIndra/ASP.NET_MVC5-ShoppingCart
+
+@using ACMEINC_19329862.Models;
+@using Microsoft.AspNetCore.Http;
+
+@{
+    ViewData["Title"] = "ProductGallery";
+}
+
+<h1>Product Gallery</h1>
+<style>
+
+
+    .row.display-flex {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+        .row.display-flex > [class*='col-'] {
+            display: flex;
+            flex-direction: column;
+        }
+</style>
+
+<div class="container-fluid">
+    <div class="row display-flex">
+        @{
+            if ((List<Product>)ViewData["partial"] != null)
+            {
+                foreach (var product in (List<Product>)ViewData["partial"])
+                {
+                    <div class="col-sm-4">
+                        <table class="table table-bordered" style="border-color:transparent; box-shadow: 0 1px 9px 0 rgba(0, 0, 0, 0.1), 0 1px 10px 0 rgba(0, 0, 0, 0.19);border-top-left-radius:30px;border-top-right-radius:30px;">
+
+                            <tr style="text-align:center">
+                                @*<td><img src="~/images/@product.pro_image" /></td>*@
+                                <td colspan="2" style="border-color:transparent;">
+                                    <img src="~/images/@product.ProductImage" style="width:40%" /><br />
+                                    <span style="color:#337ab7">@product.ProductName</span><br />
+                                    <span style="color:indianred">Description : </span>@product.ProductCategory<br />
+                                </td>
+                            </tr>
+                            <tr style="text-align:center;color:green;">
+                                <td style="border:1px solid white;">
+                                    // Disabling "add to cart" button if the user is not logged in
+                                    @{
+                                        var loggedIn = Context.Session.GetString("LoggedIn");
+
+                                        if (loggedIn != null)
+                                        {
+                                            // When chekout buttong clicked, users goes to checkout page
+                                            <button style="background-color:lavender;" class="btn btn-outline-success" asp-controller="Login" asp-action="Logout" name="compare"><span style="color:indianred">Price :</span> $@product.ProductPrice.00 &nbsp;&nbsp;&nbsp;<i class="glyphicon glyphicon-shopping-cart"></i></button>
+                                        }
+                                        else
+                                        {
+                                <li class="nav-item">
+                                    <button disabled="" style="background-color:lavender;" class="btn btn-outline-success" onclick="incrementCookie(@product.ProductId)" name="compare"><span style="color:indianred">Price :</span> $@product.ProductPrice.00 &nbsp;&nbsp;&nbsp;<i class="glyphicon glyphicon-shopping-cart"></i></button>
+                                </li>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+
+                }
+
+            }
+
+        }
+
+
+
+    </div>
+</div>
+
+<script>
+    var a = 0;
+    function increment() {
+        a = a + 1;
+        document.getElementById("count").innerHTML = a;
+
+    }</script>
+<script type="text/javascript">
+    function incrementCookie(pro_id) {
+
+        if (getCookie(pro_id) == "") {
+            document.cookie = pro_id + "=" + 1 + "; Path=/";
+        }
+        else {
+            var qty = parseInt(getCookie(pro_id));
+            document.cookie = pro_id + "=" + (1 + qty) + "; Path=/";
+        }
+    }
+
+    function getCookie(cname) {
+
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }</script>
+
